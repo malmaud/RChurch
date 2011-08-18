@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/mit-church/!svn/ver/425/trunk/church/mcmc/queries
+END
+emc-games.ss
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/mit-church/!svn/ver/273/trunk/church/mcmc/queries/emc-games.ss
+END
+mtm-query.ss
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/mit-church/!svn/ver/273/trunk/church/mcmc/queries/mtm-query.ss
+END
+tempered-transitions.ss
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/mit-church/!svn/ver/284/trunk/church/mcmc/queries/tempered-transitions.ss
+END
+gradient-mh-query.ss
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/mit-church/!svn/ver/340/trunk/church/mcmc/queries/gradient-mh-query.ss
+END
+base-queries.ss
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/mit-church/!svn/ver/273/trunk/church/mcmc/queries/base-queries.ss
+END
+annealed-importance.ss
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/mit-church/!svn/ver/425/trunk/church/mcmc/queries/annealed-importance.ss
+END
+mh-query.ss
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/mit-church/!svn/ver/273/trunk/church/mcmc/queries/mh-query.ss
+END
+temperature-games.ss
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/mit-church/!svn/ver/273/trunk/church/mcmc/queries/temperature-games.ss
+END

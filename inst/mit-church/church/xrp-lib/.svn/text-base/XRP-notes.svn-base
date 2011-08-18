@@ -1,0 +1,60 @@
+
+Notes about XRPs
+
+
+XRPs are little packages for handling state-full (but exchangeable) random primitives. The xrp interface is fairly simple: all state is maintained by trace-update, so building a new xrp involves providing only pure functions (sample, unsample, score) and initial values.
+
+In Church, the primitive 'make-xrp' is used to construct an xrp (it's somewhat like 'marg' for erps, but does a lot more real work). An application of 'make-xrp' returns an xrp object, which is a thunk that can be used just as an erp is used.
+
+
+==============
+Make-xrp is called as:
+
+  (make-xrp xrp-name sample unsample score init-stats hyperparams [proposer])
+
+  xrp-name
+Is a name for this (type of) xrp. Used to make update more conservative (when xrp operator changes to new one with same name, trace-update tries to keep value.) 
+
+  init-stats 
+Is an initial state for the state-full information maintained by the xrp (the "sufficient statistics", which could also include score caching, etc). 
+
+  hyperparams
+Is the hyperparameters for the xrp. For instance, for beta-binomial it's the psuedo-counts.
+
+  (sample stats hyperparams) --> (value new-stats)  
+This is a pure Church function that samples a new value conditioned on existing sufficient statistics (or whatever), stats, and hyperparameter values. It returns a list of sampled value and updated stats.
+
+  (unsample value stats hyperparams . flag) --> new-stats
+This is a pure Church function that updates the stats to remove a sample that resulted in value (can pretend this was the last draw due to exchangeability). Returns updated stats.
+When optional argument flag is eq to 'increment-stats, the unsampler should work in 'reverse', incrementing stats as if value were a new sample (this is used to set xrp values on initialization).
+
+  (score stats hyperparams) --> log-probability
+Scores the state stored in stats with the given hyperparams. Returns a log-probability.
+(NOTE: the score of an xrp uppon creation should be 0.0. For instance, must be careful when scores are cached to start with 0.0.)
+
+  (proposer operator operands old-value) --> proposed-value forward-log-prob backward-log-prob
+Make a proposal to an xrp sample. The proposer is responsible for updating the stats as appropriate. The default proposer samples from the conditional prior.
+
+
+==============
+It is most convenient to define the pieces of an xrp (sample,unsample,score) in scheme, and use a church wrapper function to construct the xrp. 
+
+The directory church/xrp-lib is meant to contain pieces of xrps, which are bound as primitives in standard-env. 
+
+The Church library "xrps.church" (in include/) is meant to serve as the glue to use xrps in church. It is nice if the wrapper exposes only the (hyper)parameters. Eg: 
+  (define (make-my-xrp params) (make-xrp my-sampler my-unsampler my-scorer init-stats params))
+
+See the beta-binomial examples....
+
+
+==============
+Some notes and precautions:
+
+-It is the responsibility of the xrp functions (sample, unsample, score) to describe an exchangeable distribution.
+
+-The 'make-xrp' call and the uses of the returned xrp must be within the same query!
+
+-Proposers have to be more careful for xrps than for erps: xrp proposers must only propose possible new values (ie. none with probability zero), because trace-update doesn't check the score of the make-xrp node implied by the proposed value. xrp proposers are responsible for updating stats as needed.
+
+-Trace updating is not conservative in how often it asks for scores, thus an efficient implementation of xrps requires score caching (eg. on sample/unsample).... even better is to cache recursively in order to re-use scores when possible.
+

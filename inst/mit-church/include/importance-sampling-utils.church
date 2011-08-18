@@ -1,0 +1,41 @@
+
+;;tools for managing importance samples.
+;;assumes that each importance sample has the form (sample . log-importance-weight).
+
+;; ;;compute the expected probability that the q-e is true under the specified conditional (query) model.
+;;  (define (annealed-expected-prob N temp-vars temp-schedule . args);defs query-exp cond-exp env)
+;;    (let* ((samples (repeat N
+;;                            (lambda () (apply annealed-importance-sample (pair temp-vars (pair temp-schedule args))))))
+;;           (exp-val (mean (map (lambda (s) (* (if (first s) 1 0) (exp (rest s)))) samples)))
+;;           (Z (mean (map (lambda (s) (exp (rest s))) samples)))
+;;           (scaled-weights (map (lambda (s) (/ (exp (rest s)) Z)) samples))
+;;           (Z-variance (/ (apply + (map (lambda (s) (expt (- s Z) 2)) scaled-weights)) N)))
+;;      (for-each display (list "  marginal probability and scaled variance of condition: " Z "   " Z-variance
+;;                              "\n  ESS: " (/ N (+ 1 Z-variance))
+;;                              "\n  joint marginal probability of condition and query: " exp-val
+;;                              "\n  fraction of samples with zero wieght: " (exact->inexact (/ (length (filter (lambda (s) (= (rest s) LOG-PROB-0)) samples)) N)) "\n"))
+;;      (/ exp-val Z)  ))
+
+(define (ESS samples)
+  (let* ((imp-weights (map (lambda (s) (exp (rest s))) samples))
+         (Z (mean imp-weights))
+         (scaled-weights (map (lambda (iw) (/ iw Z)) imp-weights))
+         (Z-variance (variance scaled-weights)))
+         ;(Z-variance (/ (apply + (map (lambda (s) (expt (- s Z) 2)) scaled-weights)) N)))
+    (/ (length samples) (+ 1 Z-variance))))
+
+(define (scaled-variance samples)
+  (let* ((imp-weights (map (lambda (s) (exp (rest s))) samples))
+         (Z (mean imp-weights))
+         (scaled-weights (map (lambda (iw) (/ iw Z)) imp-weights))
+         (Z-variance (variance scaled-weights)))
+         ;(Z-variance (/ (apply + (map (lambda (s) (expt (- s Z) 2)) scaled-weights)) N)))
+    Z-variance))
+
+(define (importance-expectation samples fn)
+  (let* ((imp-weights (map (lambda (s) (exp (rest s))) samples))
+         (Z (mean imp-weights))
+         (vals (map first samples)))
+    (/ (mean (map * imp-weights (map fn vals))) Z)))
+
+

@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/mit-church/!svn/ver/500/trunk/church/church-eval
+END
+logmath.ss
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/mit-church/!svn/ver/494/trunk/church/church-eval/logmath.ss
+END
+trace-update.ss
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/mit-church/!svn/ver/425/trunk/church/church-eval/trace-update.ss
+END
+env-equiv.ss
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/mit-church/!svn/ver/273/trunk/church/church-eval/env-equiv.ss
+END
+trace-update-parameters.ss
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/mit-church/!svn/ver/290/trunk/church/church-eval/trace-update-parameters.ss
+END
+church-eval.ss
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/mit-church/!svn/ver/290/trunk/church/church-eval/church-eval.ss
+END
+traces.ss
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mit-church/!svn/ver/290/trunk/church/church-eval/traces.ss
+END
+trace-eval.ss
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/mit-church/!svn/ver/494/trunk/church/church-eval/trace-eval.ss
+END
+environments-lexical.ss
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/mit-church/!svn/ver/273/trunk/church/church-eval/environments-lexical.ss
+END
+syntax.ss
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mit-church/!svn/ver/339/trunk/church/church-eval/syntax.ss
+END
+laziness.ss
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mit-church/!svn/ver/273/trunk/church/church-eval/laziness.ss
+END
+desugar.ss
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/mit-church/!svn/ver/500/trunk/church/church-eval/desugar.ss
+END

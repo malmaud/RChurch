@@ -1,10 +1,11 @@
 model = function() {
- x = rnorm(1,0,1)
- name = uniform.draw(c('jon','liz'))
+ nums = c(5,11)
+ num = sample(nums,1)
 }
 
-m = church.model(model, predicate = function() {x>0})
-samples = church.samples(m, n.iter=100, thin=1, variable.names=c('x', 'name'), n.chains=4)
+m = church.model(model, predicate = function() {true}, engine='mit-church')
+m_sampled = church.samples(m, n.iter=100, thin=1, variable.names=c('num'), n.chains=1)
+samples = m_sampled$samples;
 plot(samples)
 #autocorr.plot(samples)
 #crosscorr.plot(samples)

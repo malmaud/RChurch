@@ -1,0 +1,10 @@
+K 10
+svn:ignore
+V 8
+pregexp
+
+K 13
+svn:mergeinfo
+V 20
+/branches/ad:189-192
+END

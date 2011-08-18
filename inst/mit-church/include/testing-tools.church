@@ -1,0 +1,25 @@
+;;tools for testing stability of sampler estimates
+
+;;sampler is a thunk that returns a list of samples. each sample can be a list of values, and we want the expectation of fn on each value of the list.
+(define (estimator-variance sampler fn runs)
+  (let* ((sample-sets (repeat runs sampler))
+         (sample-sets (if (list? (first (first sample-sets))) sample-sets (map (lambda (s) (map list s)) sample-sets)))
+         (value-indices (iota (length (first (first sample-sets)))))
+         (estimates (map (lambda (samples)
+                           (map (lambda (i) (exact->inexact (mean (map (lambda (s) (fn (list-ref s i))) samples))))
+                                value-indices))
+                         sample-sets))
+         (mean-estimate (map (lambda (i) (mean (map (lambda (estimate) (list-ref estimate i)) estimates))) (iota (length (first estimates)))))
+         (variance-estimate (map (lambda (i) (variance (map (lambda (estimate) (list-ref estimate i)) estimates))) (iota (length (first estimates)))))
+         )
+    (begin
+      (display "means: ")
+      (display mean-estimate)
+      (display "\n")
+      (display "vars : ")
+      (display variance-estimate)
+      (display "\n")
+      (display "  estimates: ")
+      (display estimates)
+      (display "\n\n")
+      (list estimates mean-estimate variance-estimate))))

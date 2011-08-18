@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/mit-church/!svn/ver/481/trunk/church/utils
+END
+utils.ikarus.ss
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mit-church/!svn/ver/316/trunk/church/utils/utils.ikarus.ss
+END
+mega-comparator.ss
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/mit-church/!svn/ver/276/trunk/church/utils/mega-comparator.ss
+END
+serializer.mzscheme.ss
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/mit-church/!svn/ver/273/trunk/church/utils/serializer.mzscheme.ss
+END
+AD.ss
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/mit-church/!svn/ver/425/trunk/church/utils/AD.ss
+END
+levenshtein.ss
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/mit-church/!svn/ver/286/trunk/church/utils/levenshtein.ss
+END
+rnrs.ss
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/mit-church/!svn/ver/275/trunk/church/utils/rnrs.ss
+END
+serializer.ikarus.ss
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/mit-church/!svn/ver/273/trunk/church/utils/serializer.ikarus.ss
+END
+utils.mzscheme.ss
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mit-church/!svn/ver/273/trunk/church/utils/utils.mzscheme.ss
+END

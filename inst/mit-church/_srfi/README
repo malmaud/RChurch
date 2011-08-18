@@ -1,0 +1,59 @@
+Scheme Requests for Implementation (_srfis) for R6RS
+---------------------------------------------------
+
+A basic framework for SRFIs made into R6RS libraries.  The libraries' names
+conform to SRFI 97: SRFI Libraries.  There is a registry of available SRFIs (and
+other platform features) which works alongside SRFI 0: Feature-Based Conditional
+Expansion.  The porting done so far is mostly just taking the reference
+implementations from http://srfi.schemers.org and wrapping them in libraries and
+tweaking the few things needed to make them work in R6RS libraries and with
+implementations' functionality.  Supporting any R6RS implementation supporting
+the *.IMPL.sls convention is easy.  The ports and the framework started as just
+an exercise in using R6RS.  If you have other ideas, let's see if we can
+collaborate.
+
+These SRFIs are available:
+  (_srfi :0 cond-expand)
+  (_srfi :1 lists)
+  (_srfi :2 and-let*)
+  (_srfi :6 basic-string-ports)
+  (_srfi :8 receive)
+  (_srfi :9 records)
+  (_srfi :11 let-values)
+  (_srfi :13 strings)
+  (_srfi :14 char-sets)
+  (_srfi :16 case-lambda)
+  (_srfi :19 time)
+  (_srfi :23 error)
+  (_srfi :26 cut)
+  (_srfi :27 random-bits)
+  (_srfi :31 rec)
+  (_srfi :37 args-fold)
+  (_srfi :38 with-shared-structure)
+  (_srfi :39 parameters)
+  (_srfi :41 streams)
+  (_srfi :42 eager-comprehensions)
+  (_srfi :43 vectors)
+  (_srfi :48 intermediate-format-strings)
+  (_srfi :61 cond)
+  (_srfi :67 compare-procedures)
+  (_srfi :78 lightweight-testing)
+
+Currently, only Ikarus and Ypsilon can use these libraries.  PLT Scheme has its
+own "srfi" directory which conflicts with having another "srfi" directory.
+Larceny does not (yet?) support the *.IMPL.sls convention.
+  
+For the latest development version, go to:
+
+  https://code.launchpad.net/~ikarus-libraries-team/ikarus-libraries/srfi
+
+If you already have ported SRFIs to R6RS, we'd love to assimilate them.  You
+can let us know by "asking a question" at the Ikarus Libraries project page:
+
+  https://launchpad.net/ikarus-libraries
+
+Bug Reporting:
+--------------
+Submit bug reports at:
+
+  https://bugs.launchpad.net/ikarus-libraries/+filebug

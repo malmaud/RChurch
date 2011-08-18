@@ -1,0 +1,34 @@
+MIT-Church v0.2-alpha
+
+This is MIT-Church v0.2-alpha, the MIT implementation of the Church
+probabilistic programming language.  (See "Church: a language for
+generative models", Goodman, et. al., 2008.)
+
+See COPYRIGHT-NOTICE and COPYING for license and redistribution
+information. See AUTHORS for authorship.
+
+NOTE!!:
+
+MIT-Church is currently in ALPHA testing.  Please do not re-distribute
+this version directly. Instead, email church-devel@mit.edu for
+distribution requests.  This code is likely unstable, buggy, and slow.
+Use at your own risk.  Bug reports and, especially, patches are
+welcome. Send them to church-devel@mit.edu.
+
+
+=================================
+Getting started.
+
+You'll need PLT or Ikarus scheme installed, and the
+Gnu Scientific Library.
+
+Look at the Church wiki for information on installation and examples:
+  http://projects.csail.mit.edu/church
+
+Run tests/church-test-suite.ss to verify your installation (and marvel
+at the power).
+
+Go write some models -- good luck!
+
+
+

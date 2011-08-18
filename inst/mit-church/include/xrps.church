@@ -1,0 +1,85 @@
+
+;;this is a church library defining some xrps. it relies on various primitive pieces from church/xrp-lib that should be bound in standard-env.
+
+(define (make-gensym kind) (make-xrp 'gensym-xrp
+                                     gensym-xrp-sampler
+                                     gensym-xrp-unsampler
+                                     gensym-xrp-scorer
+                                     '()
+                                     kind))
+
+;(define (make-beta-binomial alpha beta) (make-xrp 'beta-binomial
+;                                                  beta-binomial-sampler 
+;                                                  beta-binomial-unsampler
+;                                                  beta-binomial-scorer
+;                                                  (list 0.0 0.0)
+;                                                  (list alpha beta)))
+
+(define (make-dirichlet-discrete hyp) (make-xrp 'dirichlet-discrete 
+                                                dirichlet-discrete-sampler
+                                                dirichlet-discrete-unsampler
+                                                dirichlet-discrete-scorer
+                                                (dirichlet-discrete-init-stats hyp);(make-list (length hyp) 0.0)
+                                                hyp
+                                                dirichlet-discrete-uniform-proposer
+                                                ))
+
+;;the d-d is more general and is cached, so use that for b-b:
+(define (make-beta-binomial alpha beta)
+  (let ((dd (make-dirichlet-discrete (list alpha beta))))
+    (lambda () (= (dd) 1))))
+
+(define (make-ms-dirichlet-discrete hyp) (make-xrp 'ms-dirichlet-discrete 
+                                                   ms-dirichlet-discrete-sampler
+                                                   ms-dirichlet-discrete-unsampler
+                                                   ms-dirichlet-discrete-scorer
+                                                   (ms-dirichlet-discrete-init-stats hyp)
+                                                   hyp
+                                                   ms-dirichlet-discrete-uniform-proposer
+                                                   ))
+
+(define (make-symmetric-dirichlet-discrete N hyp) (make-dirichlet-discrete (make-list N hyp)))
+
+
+(define (make-normal-normal-gamma mu kappa alpha beta) (make-xrp 'normal-normal-gamma
+                                                                 normal-normal-gamma-sampler 
+                                                                 normal-normal-gamma-unsampler 
+                                                                 normal-normal-gamma-scorer 
+                                                                 (normal-normal-gamma-init-stats 
+                                                                  (list mu kappa alpha beta))
+                                                                 (list mu kappa alpha beta)
+                                                                 ))
+
+(define (make-CRP alpha) (make-xrp 'CRP
+                                   CRP-sampler
+                                   CRP-unsampler
+                                   CRP-scorer
+                                   CRP-init-stats
+                                   alpha
+                                   ;CRP-uniform-proposer
+                                   ))
+
+;;this is a version of DPmem using the crp representation:
+(define (DPmem alpha proc)
+  (let ((augmented-proc (mem (lambda (args part) (apply proc args))))
+        (crps (mem (lambda (args) (make-CRP alpha)))))
+    (lambda argsin (augmented-proc argsin ((crps argsin))))))
+(define CRPmem DPmem)
+
+;;;erps can be viewed as creating a new xrp, using it, then throwing it away. this function converts an erp to such an xrp-based procedure.
+;;;the stats are just the sampled value. the hyperparams are the input args.
+;(define (erp->xrp erp)
+;    (lambda args
+;        (make-xrp (gensym 'erp)
+;                  (lambda (stats hyperparams) (let ((val (apply (erp-sampler erp) hyperparams))) (list val val))) ;;sampler
+;                  (lambda (value stats hyperparams . flag) (if (null? flag) '() value)) ;;unsampler
+;                  (lambda (stats hyperparams) ((erp-scorer erp) hyperparams stats)) ;;scorer
+;                  '() ;;init-stats 
+;                  args ;;hyperparams
+;                  ;;FIXME: proposer??
+;                  )
+;        ) ;;sample the xrp.
+;      ))
+
+
+;;exponential family distributions all have conjugate priors. given the defining functions (sufficient statistics etc), we build an xrp for the collapsed conjugate model. 

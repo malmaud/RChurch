@@ -57,7 +57,8 @@ R.func.to.church <- function(R_expr) { #Translates an R function into a lambda e
   }
   else {
     formal_args = as.list(R_expr[[2]])
-    formal_arg_names = ls(formal_args)
+    formal_arg_names = as.character(ls(formal_args))
+    formal_arg_names = convert.strings(formal_arg_names)
   }
 #   body = R_expr[[3]][2:length(R_expr[[3]])]
 #   parsed_body = c()
@@ -75,7 +76,7 @@ R.list.to.church <- function(R_expr) {
 R.vectorized.to.church <- function(base.fun, part) {
   n = part[2]
   if(n=="1") {
-    res= sprintf("(%s %s %s)", base.fun, part[3], part[4])
+    res= sprintf("(%s %s)", base.fun, paste(part[3:length(part)], collapse=' '))
   }
   else {
     res = sprintf("(repeat %s (lambda () (%s %s %s)))", part[2], base.fun, part[3], part[4])
@@ -93,14 +94,17 @@ R.to.church.idioms <- function(part, R_expr) { #We translate some common R idiom
   else if(part[1]=='rnorm') {
     res$code = R.vectorized.to.church('gaussian', part)
   }
-  else if(part[1]=="runif") { #check if this is right
-    res$code = R.vectorized.to.church('uniform-draw', part)
+  else if(part[1]=="sample") { # an impoverished sample
+    res$code = R.vectorized.to.church('uniform-draw', part[c(1,3,2)]) #switch order of parameters so size variable looks like the first argument
+  }
+  else if(part[1]=="runif") { # an impoverished sample
+    res$code = R.vectorized.to.church('uniform', part) #switch order of parameters so size variable looks like the first argument
   }
   else if(part[1]=='rgamma') { #rate has to be converted to scale
     res$code = sprintf("(gamma %s %s)", part[3], as.character(1/as.numeric(part[4])))
   }
   else if(part[1]=='rdirichlet') {
-    res$code = sprintf("(rdirichlet %s %s)", part[3], part[4])
+    res$code = sprintf("(dirichlet %s)", part[3])
   }
   else if(part[1]=='uniform.draw') {
     res$code = sprintf("(uniform-draw %s)", part[2])
@@ -160,6 +164,10 @@ R.to.church.index <- function(R_expr) { # An expression like x[3]
   indexval = R.to.church.rec(R_expr[[3]])$code
   sprintf("(list-ref %s %s)", varname, indexval)
 }
+
+convert.strings <- function(str) {
+  gsub('\\.', '-', str)
+}
   
 R.to.church.rec <- function(R_expr, vars=c()) { #Recursive function for parsing R code into Church code
   as.c = as.character;
@@ -173,7 +181,7 @@ R.to.church.rec <- function(R_expr, vars=c()) { #Recursive function for parsing 
     base_str = sub('^F$', 'false',  base_str)
     base_str = sub('^FALSE$', 'false', base_str)
     if(class(R_expr)!="character" && class(R_expr)!="numeric") {
-      base_str = gsub('\\.', '-', base_str)
+      base_str = convert.strings(base_str)    
     }
     if(class(R_expr)=="call") { #A function call with no arguments need special treatment
       base_str = paste('(',base_str,')',sep='')

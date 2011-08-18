@@ -8,6 +8,6 @@ Maintainer: Jonathan Malmaud <malmaud@mit.edu>
 Description: A set of functions for running Church programs within R and analyzing the results using CODA routines.
 License: GPL-3
 LazyLoad: yes
-Depends:  coda, parfor
+Depends:  coda, foreach
 Suggests: doMC
 

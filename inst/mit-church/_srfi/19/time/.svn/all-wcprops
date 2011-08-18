@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/mit-church/!svn/ver/1/trunk/_srfi/19/time
+END
+compat.larceny.sls
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mit-church/!svn/ver/1/trunk/_srfi/19/time/compat.larceny.sls
+END
+compat.ypsilon.sls
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mit-church/!svn/ver/1/trunk/_srfi/19/time/compat.ypsilon.sls
+END
+compat.ikarus.sls
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/mit-church/!svn/ver/1/trunk/_srfi/19/time/compat.ikarus.sls
+END
+compat.mzscheme.sls
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/mit-church/!svn/ver/1/trunk/_srfi/19/time/compat.mzscheme.sls
+END

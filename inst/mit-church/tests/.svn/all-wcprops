@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/mit-church/!svn/ver/425/trunk/tests
+END
+old-church-test-suite.ss
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mit-church/!svn/ver/273/trunk/tests/old-church-test-suite.ss
+END
+church-test-suite.ss
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/mit-church/!svn/ver/425/trunk/tests/church-test-suite.ss
+END
+machinefile
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/mit-church/!svn/ver/30/trunk/tests/machinefile
+END
+gradient-test-suite.ss
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mit-church/!svn/ver/316/trunk/tests/gradient-test-suite.ss
+END
+context-tests.ss
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/mit-church/!svn/ver/305/trunk/tests/context-tests.ss
+END
+importance-test-suite.ss
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/mit-church/!svn/ver/296/trunk/tests/importance-test-suite.ss
+END
+test_pc.sh
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/mit-church/!svn/ver/30/trunk/tests/test_pc.sh
+END
+bound-tests.ss
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/mit-church/!svn/ver/305/trunk/tests/bound-tests.ss
+END
+xrp-tests.ss
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/mit-church/!svn/ver/273/trunk/tests/xrp-tests.ss
+END
+parallel-church-test-suite.ss
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/mit-church/!svn/ver/31/trunk/tests/parallel-church-test-suite.ss
+END

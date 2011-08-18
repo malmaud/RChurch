@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/mit-church/!svn/ver/1/trunk/_srfi/private
+END
+include-resolve.sls
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/mit-church/!svn/ver/1/trunk/_srfi/private/include-resolve.sls
+END
+let-opt.sls
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/mit-church/!svn/ver/1/trunk/_srfi/private/let-opt.sls
+END
+registry.sls
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/mit-church/!svn/ver/1/trunk/_srfi/private/registry.sls
+END
+implementation-features.mzscheme.sls
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/mit-church/!svn/ver/1/trunk/_srfi/private/implementation-features.mzscheme.sls
+END
+make-aliased-libraries.sps
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/mit-church/!svn/ver/1/trunk/_srfi/private/make-aliased-libraries.sps
+END
+implementation-features.larceny.sls
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/mit-church/!svn/ver/1/trunk/_srfi/private/implementation-features.larceny.sls
+END
+implementation-features.ypsilon.sls
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/mit-church/!svn/ver/1/trunk/_srfi/private/implementation-features.ypsilon.sls
+END
+implementation-features.ikarus.sls
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/mit-church/!svn/ver/1/trunk/_srfi/private/implementation-features.ikarus.sls
+END

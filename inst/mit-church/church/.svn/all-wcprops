@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/mit-church/!svn/ver/504/trunk/church
+END
+church.ss
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/mit-church/!svn/ver/501/trunk/church/church.ss
+END
+register-primitives.ss
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/mit-church/!svn/ver/273/trunk/church/register-primitives.ss
+END
+readable-scheme.ss
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/mit-church/!svn/ver/306/trunk/church/readable-scheme.ss
+END
+standard-env.ss
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/mit-church/!svn/ver/500/trunk/church/standard-env.ss
+END

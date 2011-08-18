@@ -11,10 +11,14 @@ load.church.from.file <- function(filename='~/tmp/test.church') {
 }
 
 wrap.church <- function(church) {
-  #church$prefix = c('(import (church church))', '(church')
-  #church$suffix = c(')', '(exit 0)')
-  church$prefix= ''
-  church$suffix = ''
+  if(church$engine=="mit-church") {
+    church$prefix = c('(import (church church))', '(church')
+    church$suffix = c(')', '(exit 0)')
+  }
+  else {
+    church$prefix= ''
+    church$suffix = ''
+  }
   church
 }
   
@@ -24,10 +28,11 @@ new.church = function() {
   church
 }
 
-church.model <- function(model=function() {}, predicate=function() {},context=function() {}) {
+church.model <- function(model=function() {}, predicate=function() {},context=function() {}, engine='bher') {
   query = predicate
   church = new.church()
   model_code = R.to.church(model)
+  church$engine = engine
   church$vars = unique(model_code$vars)
   church$query = R.to.church(query)$code
   church$context = R.to.church(context)$code
@@ -44,17 +49,18 @@ church.program <- function(church) {
 
   
 church.samples <- function (church, variable.names=church$vars,  n.iter=100, 
-                            thin=100, n.chains=1, method='mcmc', inputs=list()) {
+                            thin=100, n.chains=1, method='mcmc', inputs=list(), debug=F) {
   vars = variable.names
   n.samples= n.iter
   vars.for.church = gsub('\\.', '-', vars)
   list_line = sprintf('(list %s)', paste(vars.for.church,collapse=' '))
   church$obs.vars= list_line
-  #tmp_file = '/Users/malmaud/tmp/tmp_church.church'    
-  #church_path = '.:/Users/malmaud/tmp/scheme-tools:/Users/malmaud/tmp/bher'
-  #bher_path = '/Users/malmaud/tmp/bher'
-  church_path = paste('.', system.file('scheme-tools', package='RChurch'), system.file('bher', package='RChurch'), sep=':')
-  bher_path = system.file('bher', package='RChurch')
+  if(church$engine=="bher")
+    church_path = paste('.', system.file('scheme-tools', package='RChurch'), system.file('bher', package='RChurch'), sep=':')
+  else if (church$engine=="mit-church")
+    #church_path = paste('.', system.file('scheme-tools', package='RChurch'), system.file('mit-church', package='RChurch'), sep=':')
+    church_path = system.file('mit-church', package='RChurch')
+  engine_path = system.file(church$engine, package='RChurch')
   church$inputs = R.to.church.inits(inputs)
   if(method=='mcmc') {
     church$query.line.prefix = paste('(mh-query', n.samples, thin, sep=' ')
@@ -64,14 +70,18 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
     church$query.line.prefix = sprintf('(repeat %d (lambda () (rejection-query ', n.iter)
     church$query.line.suffix=')))'
   }
-  #file.remove(tmp_file)
   church$church.program = church.program(church)
   env_str = c()
-  env_str[1] = paste("PATH=", bher_path,':$PATH', sep='')
-  env_str[2] = paste("VICARE_LIBRARY_PATH=", church_path,":$VICARE_LIBRARY_PATH", sep='')
+  env_str[1] = paste("PATH=", engine_path,':$PATH', sep='')
+  if(church$engine=="bher")
+    env_str[2] = paste("VICARE_LIBRARY_PATH=", church_path,":$VICARE_LIBRARY_PATH", sep='')
+  else
+    env_str[2] = paste("IKARUS_LIBRARY_PATH=", church_path, ":$IKARUS_LIBRARY_PATH", sep='')
   env_str = paste(env_str, collapse="\n")
+  
+  if(debug) cat(church$church.program)
+  
   res.mcmc = draw_parallel_chain(church, n.chains, env_str, vars)
-  #plot(res.mcmc)
   church$samples = res.mcmc
   church$level.names = attr(res.mcmc[[1]], 'level_names')
   for(i in length(church$samples)) {
@@ -80,7 +90,7 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   church
 }
 
-find.lists <- function(output) {
+find.lists <- function(output) { #Will be used for parsing list outputs, not currently used
   output = strsplit(output, '')[[1]]
   pos = 2
   pars = 0
@@ -147,7 +157,12 @@ draw_single_chain <- function(church, env_str, vars) {
   writeLines(church$church.program, tmp_file)
   old_warn = getOption('warn')
   options(warn=-1)
-  raw_output = system2('bher', tmp_file, env=env_str, stdout=T)
+  if(church$engine=="bher") {
+    raw_output = system2('bher', tmp_file, env=env_str, stdout=T)
+  }
+  else if (church$engine=="mit-church") {
+    raw_output = system2('ikarus', tmp_file, env=env_str, stdout=T)
+  }
   options(warn=old_warn)
   parse.church.output(raw_output, vars)
 }

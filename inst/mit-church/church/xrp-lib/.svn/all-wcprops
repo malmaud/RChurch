@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/mit-church/!svn/ver/290/trunk/church/xrp-lib
+END
+XRP-notes
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/mit-church/!svn/ver/126/trunk/church/xrp-lib/XRP-notes
+END
+normal-normal-gamma.ss
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/mit-church/!svn/ver/290/trunk/church/xrp-lib/normal-normal-gamma.ss
+END
+beta-binomial.ss
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/mit-church/!svn/ver/273/trunk/church/xrp-lib/beta-binomial.ss
+END
+CRP.ss
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/mit-church/!svn/ver/290/trunk/church/xrp-lib/CRP.ss
+END
+ms-dirichlet-discrete.ss
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/mit-church/!svn/ver/290/trunk/church/xrp-lib/ms-dirichlet-discrete.ss
+END
+dirichlet-discrete-nocache.ss
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/mit-church/!svn/ver/273/trunk/church/xrp-lib/dirichlet-discrete-nocache.ss
+END
+dirichlet-discrete.ss
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/mit-church/!svn/ver/290/trunk/church/xrp-lib/dirichlet-discrete.ss
+END
+gensym-xrp.ss
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mit-church/!svn/ver/273/trunk/church/xrp-lib/gensym-xrp.ss
+END

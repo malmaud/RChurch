@@ -1,0 +1,31 @@
+
+(define (noisify v noise)
+  (flip (if v (- 1 noise) noise)))
+
+(define (noisify-pred pred noise)
+  (lambda (x) (flip (if (pred x) (- 1 noise) noise))))
+
+(define (noisify-integer n min max noise)
+  (let* ((n (- n min))
+         (max (- max min))
+         (noise-prob (/ noise max))
+         (probs (append (make-list n noise-prob)
+                        (list (+ (- 1 noise) noise-prob))
+                        (make-list (- max n) noise-prob))))
+       (+ min (discrete probs))))
+
+
+(define (noisify-all l noise)
+  (map (lambda (v) (noisify v noise)) l))
+
+(define noisy-and
+   (lambda args
+     (let ((noise  (first args))
+           (values (rest args)))
+       (all (noisify-all values noise)))))
+
+(define noisy-or
+   (lambda args
+     (let ((noise  (first args))
+           (values (rest args)))
+       (any (noisify-all values noise)))))

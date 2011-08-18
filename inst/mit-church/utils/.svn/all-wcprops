@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/mit-church/!svn/ver/281/trunk/utils
+END
+compile-dependencies-ikarus.sh
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/mit-church/!svn/ver/273/trunk/utils/compile-dependencies-ikarus.sh
+END
+docgen.py
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/mit-church/!svn/ver/281/trunk/utils/docgen.py
+END

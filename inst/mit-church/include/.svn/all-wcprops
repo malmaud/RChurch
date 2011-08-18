@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/mit-church/!svn/ver/500/trunk/include
+END
+standard-preamble.church
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/mit-church/!svn/ver/500/trunk/include/standard-preamble.church
+END
+importance-sampling-utils.church
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/mit-church/!svn/ver/425/trunk/include/importance-sampling-utils.church
+END
+testing-tools.church
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/mit-church/!svn/ver/284/trunk/include/testing-tools.church
+END
+noisy-logic.church
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/mit-church/!svn/ver/104/trunk/include/noisy-logic.church
+END
+xrps.church
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/mit-church/!svn/ver/265/trunk/include/xrps.church
+END

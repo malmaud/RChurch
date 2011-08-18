@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/mit-church/!svn/ver/501/trunk/church/constraint-propagation
+END
+trace-constraint-propagation.ss
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/mit-church/!svn/ver/290/trunk/church/constraint-propagation/trace-constraint-propagation.ss
+END
+primitive-inverses.ss
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/mit-church/!svn/ver/501/trunk/church/constraint-propagation/primitive-inverses.ss
+END
+constraints.ss
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/mit-church/!svn/ver/290/trunk/church/constraint-propagation/constraints.ss
+END
