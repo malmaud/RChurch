@@ -47,7 +47,7 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
                             thin=100, method='mcmc', inputs=list()) {
   vars = variable.names
   n.samples= n.iter
-  vars.for.church = gsub('\\.', vars, '-')
+  vars.for.church = gsub('\\.', '-', vars)
   list_line = sprintf('(list %s)', paste(vars.for.church,collapse=' '))
   church$obs.vars= list_line
   #tmp_file = '/Users/malmaud/tmp/tmp_church.church'    
@@ -67,12 +67,14 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   }
   #file.remove(tmp_file)
   writeLines(church.program(church), tmp_file)
+  cat(church.program(church))
   old_warn = getOption('warn')
   options(warn=-1)
   env_str = c()
   env_str[1] = paste("PATH=", bher_path,':$PATH', sep='')
   env_str[2] = paste("VICARE_LIBRARY_PATH=", church_path,":$VICARE_LIBRARY_PATH", sep='')
   raw_output = system2('bher', tmp_file, env=paste(env_str,collapse="\n"), stdout=T)
+  cat(raw_output)
   options(warn=old_warn)
   data_start = which(regexpr('^\\(', raw_output)==1)[[1]]
   data_str = raw_output[data_start:length(raw_output)]
