@@ -44,7 +44,7 @@ church.program <- function(church) {
 
   
 church.samples <- function (church, variable.names=church$vars,  n.iter=100, 
-                            thin=100, method='mcmc', inputs=list()) {
+                            thin=100, n.chains=1, method='mcmc', inputs=list()) {
   vars = variable.names
   n.samples= n.iter
   vars.for.church = gsub('\\.', '-', vars)
@@ -53,7 +53,6 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   #tmp_file = '/Users/malmaud/tmp/tmp_church.church'    
   #church_path = '.:/Users/malmaud/tmp/scheme-tools:/Users/malmaud/tmp/bher'
   #bher_path = '/Users/malmaud/tmp/bher'
-  tmp_file = file.path(tempdir(), 'tmp_church.church')
   church_path = paste('.', system.file('scheme-tools', package='RChurch'), system.file('bher', package='RChurch'), sep=':')
   bher_path = system.file('bher', package='RChurch')
   church$inputs = R.to.church.inits(inputs)
@@ -66,15 +65,32 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
     church$query.line.suffix=')))'
   }
   #file.remove(tmp_file)
-  writeLines(church.program(church), tmp_file)
-  cat(church.program(church))
-  old_warn = getOption('warn')
-  options(warn=-1)
+  church$church.program = church.program(church)
   env_str = c()
   env_str[1] = paste("PATH=", bher_path,':$PATH', sep='')
   env_str[2] = paste("VICARE_LIBRARY_PATH=", church_path,":$VICARE_LIBRARY_PATH", sep='')
-  raw_output = system2('bher', tmp_file, env=paste(env_str,collapse="\n"), stdout=T)
-  cat(raw_output)
+  env_str = paste(env_str, collapse="\n")
+  res.mcmc = draw_parallel_chain(church, n.chains, env_str, vars)
+  #plot(res.mcmc)
+  res.mcmc
+}
+
+draw_parallel_chain <- function(church, n.chains, env_str, vars) {
+  if(require(doMC)) {
+    registerDoMC(n.chains)
+  }
+  res = foreach(i=icount(n.chains)) %dopar% {
+    draw_single_chain(church,  env_str, vars)
+  }
+  do.call(mcmc.list, res)
+}
+
+draw_single_chain <- function(church,  env_str, vars) {
+  tmp_file = tempfile('tmp_church', fileext='church')
+  writeLines(church$church.program, tmp_file)
+  old_warn = getOption('warn')
+  options(warn=-1)
+  raw_output = system2('bher', tmp_file, env=env_str, stdout=T)
   options(warn=old_warn)
   data_start = which(regexpr('^\\(', raw_output)==1)[[1]]
   data_str = raw_output[data_start:length(raw_output)]
@@ -95,7 +111,4 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   }
   names(res) = vars
   res.mcmc = mcmc(do.call(cbind, res))
-  
-  plot(res.mcmc)
-  res.mcmc
 }
