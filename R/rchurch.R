@@ -72,26 +72,35 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   env_str = paste(env_str, collapse="\n")
   res.mcmc = draw_parallel_chain(church, n.chains, env_str, vars)
   #plot(res.mcmc)
-  res.mcmc
+  church$samples = res.mcmc
+  church$level.names = attr(res.mcmc[[1]], 'level_names')
+  for(i in length(church$samples)) {
+    attr(church$samples[[i]], 'level_names')= NULL
+  }
+  church
 }
 
-draw_parallel_chain <- function(church, n.chains, env_str, vars) {
-  if(require(doMC)) {
-    registerDoMC(n.chains)
+find.lists <- function(output) {
+  output = strsplit(output, '')[[1]]
+  pos = 2
+  pars = 0
+  repeat {
+    char = output[pos]
+    if(char=="(") {
+      pars = pars+1
+    }
+    if(char==")") {
+      pars = pars-1
+      if(pars==0) {
+        break
+      }
+    }
+    pos = pos + 1
   }
-  res = foreach(i=icount(n.chains)) %dopar% {
-    draw_single_chain(church,  env_str, vars)
-  }
-  do.call(mcmc.list, res)
+  block = output[3:(pos-1)]
 }
 
-draw_single_chain <- function(church,  env_str, vars) {
-  tmp_file = tempfile('tmp_church', fileext='church')
-  writeLines(church$church.program, tmp_file)
-  old_warn = getOption('warn')
-  options(warn=-1)
-  raw_output = system2('bher', tmp_file, env=env_str, stdout=T)
-  options(warn=old_warn)
+parse.church.output <- function(raw_output, vars) {
   data_start = which(regexpr('^\\(', raw_output)==1)[[1]]
   data_str = raw_output[data_start:length(raw_output)]
   data_str = paste(data_str, collapse='')
@@ -100,15 +109,45 @@ draw_single_chain <- function(church,  env_str, vars) {
   data_str = gsub('#f', '0', data_str)
   data_str = gsub('#t', '1', data_str)
   data = strsplit(data_str,' ')[[1]]
-  data = as.numeric(data)
   n_data = length(data)
   res = list()
+  level_names = list() 
+  factor_outputs = c()
   for(i in 1:length(vars)) {
-    res[[i]] = data[seq(i, n_data, length(vars))]
-#     if(var_types[i]=='logical') {
-#       res[[i]] = as.logical(res[[i]])
-#     }
+    r = data[seq(i, n_data, length(vars))]
+    if(!is.na(as.numeric(r[1]))) { #r is numeric
+      r = as.numeric(r);
+    }
+    else {
+      r = factor(r)   
+      factor_outputs = c(factor_outputs, i)
+      level_names[[length(factor_outputs)]] = levels(r)
+    }
+    res[[i]] = r
   }
+  names(level_names) = vars[factor_outputs]
   names(res) = vars
-  res.mcmc = mcmc(do.call(cbind, res))
+  res.mcmc = mcmc(do.call(cbind, res))  
+  attr(res.mcmc, 'level_names') = level_names
+  res.mcmc
+}
+
+draw_parallel_chain <- function(church, n.chains, env_str, vars) {
+  if(require(doMC)) {
+    registerDoMC(n.chains)
+  }
+  res = foreach(i=icount(n.chains)) %dopar% {
+    draw_single_chain(church, env_str, vars)
+  }
+  do.call(mcmc.list, res)
+}
+
+draw_single_chain <- function(church, env_str, vars) {
+  tmp_file = tempfile('tmp_church', fileext='church')
+  writeLines(church$church.program, tmp_file)
+  old_warn = getOption('warn')
+  options(warn=-1)
+  raw_output = system2('bher', tmp_file, env=env_str, stdout=T)
+  options(warn=old_warn)
+  parse.church.output(raw_output, vars)
 }
