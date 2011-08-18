@@ -34,6 +34,7 @@ The sampler method. Either "mcmc" for the Metropolis Hastings sampler or "reject
 }
   \item{inputs}{
 %%     ~~Describe \code{inputs} here~~
+A list of inptus to the Church model.
 }
 }
 \details{
@@ -65,7 +66,7 @@ Note that the total number of iterations the sampler will be run for is n.iter *
 }
 \examples{
 #Assume my.program already exists
-samples = church.samples(my.program, variable.names=c('x','y'), n.iter=100, thin=10, method='mcmc')
+samples = church.samples(my.program, variable.names=c('x','y'), n.iter=100, thin=10, method='mcmc', inputs=list(name='jon', age=24))
 plot(samples)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
