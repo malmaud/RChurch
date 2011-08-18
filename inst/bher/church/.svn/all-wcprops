@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/53/trunk/church
+END
+mcmc-preamble.church
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/51/trunk/church/mcmc-preamble.church
+END
+standard-preamble.church
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/48/trunk/church/standard-preamble.church
+END
+readable-scheme.ss
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/53/trunk/church/readable-scheme.ss
+END
+devel-notes
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/14/trunk/church/devel-notes
+END
+trie.ss
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/51/trunk/church/trie.ss
+END
+AD.ss
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/51/trunk/church/AD.ss
+END
+church-compiler.ss
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/51/trunk/church/church-compiler.ss
+END
+xrp-preamble.church
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/51/trunk/church/xrp-preamble.church
+END
+header.ss
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/51/trunk/church/header.ss
+END
+desugar.ss
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/!svn/ver/53/trunk/church/desugar.ss
+END
+compiler.ss
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/53/trunk/church/compiler.ss
+END

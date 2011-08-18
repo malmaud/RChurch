@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/53/trunk/scheme-compilers
+END
+trailer-ikarus.sc
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/43/trunk/scheme-compilers/trailer-ikarus.sc
+END
+header-vicare.sc
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/53/trunk/scheme-compilers/header-vicare.sc
+END
+header-ikarus.sc
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/51/trunk/scheme-compilers/header-ikarus.sc
+END
+trailer-vicare.sc
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/51/trunk/scheme-compilers/trailer-vicare.sc
+END
