@@ -136,6 +136,9 @@ R.to.church.idioms <- function(part, R_expr) { #We translate some common R idiom
   else if(part[1]=="c") {
     res$code = R.list.to.church(part)
   }
+  else if(part[1]==":") {
+    res$code = sprintf('(range %s %s)', part[2], part[3])
+  }
   else {
     res$code = sprintf("(%s %s)", part[1], paste(part[2:length(part)], collapse=' '))
   }

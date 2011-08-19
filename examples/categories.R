@@ -2,7 +2,7 @@ model = function() {
   colors = c('blue', 'green', 'red')
   phi = rdirichlet(1, c(1,1,1))
   alpha = .1
-  prototype = sapply(phi, function(w) alpha*w)
+  prototype = sapply(phi, function(w) alpha*w) # Will later be alpha*phi directly
   bag.prototype = mem(function(bag) rdirichlet(1, prototype))
   obs.bag = mem(function(obs.name) sample(c('bag1', 'bag2', 'bag3'), 1))
   draw.marble = mem(function(obs.name) multinomial(colors, bag.prototype(obs.bag(obs.name))))
@@ -20,4 +20,4 @@ predicate = function() {
 }
 
 m = church.model(model, predicate, engine='mit-church')
-m = church.samples(m, n.iter=200, thin=100, variable.names=c('same1', 'same2'))
+m = church.samples(m, n.iter=200, thin=100, variable.names=c('same1', 'same2'), n.chains=2)

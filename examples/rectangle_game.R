@@ -13,4 +13,4 @@ model = function() {
 }
 
 m = church.model(model, function() sim.data==obs.data, engine='mit-church')
-m = church.samples(m, variable.names=c('x1','x2','y1','y2'), n.iter=300, thin=100)
+m = church.samples(m, variable.names=c('x1','x2','y1','y2'), n.iter=2, thin=1)
