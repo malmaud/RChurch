@@ -91,40 +91,40 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
 }
 
 find.lists <- function(output) { #Will be used for parsing list outputs, not currently used
-  output = strsplit(output, '')[[1]]
-  pos = 2
-  pars = 0
-  repeat {
-    char = output[pos]
-    if(char=="(") {
-      pars = pars+1
-    }
-    if(char==")") {
-      pars = pars-1
-      if(pars==0) {
-        break
+  output1 = gsub('\\(', 'c(', output)
+  output2 = gsub(' ', ',', output1)
+  e = parse(text=output2)[[1]]
+  group1 = e[2:length(e)]
+  n.iter = length(group1)
+  n.vars = length(e[[2]])-1
+  res = list()
+  for(i in 1:length(group1)) {
+    g = group1[[i]]
+    group2 = g[2:length(g)]
+    res[[i]] = list()
+    for(j in 1:length(group2)) {
+      h = group2[[j]]
+      if(length(h)>1) { 
+        h = as.list(h[2:length(h)])
       }
+      res[[i]][[j]]=h
     }
-    pos = pos + 1
   }
-  block = output[3:(pos-1)]
+  res
 }
 
 parse.church.output <- function(raw_output, vars) {
   data_start = which(regexpr('^\\(', raw_output)==1)[[1]]
   data_str = raw_output[data_start:length(raw_output)]
   data_str = paste(data_str, collapse='')
-  data_str = gsub('\\(', '', data_str)
-  data_str = gsub('\\)', '', data_str)
   data_str = gsub('#f', '0', data_str)
   data_str = gsub('#t', '1', data_str)
-  data = strsplit(data_str,' ')[[1]]
-  n_data = length(data)
+  parse.res = find.lists(data_str)
   res = list()
   level_names = list() 
   factor_outputs = c()
   for(i in 1:length(vars)) {
-    r = data[seq(i, n_data, length(vars))]
+    r = parse.res[, i]
     if(!is.na(as.numeric(r[1]))) { #r is numeric
       r = as.numeric(r);
     }
