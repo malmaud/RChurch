@@ -1,6 +1,9 @@
 model = function() {
- nums = c(5,11)
- num = sample(nums,1)
+ tosses = function(K) {
+   if(K==0) list() else pair(flip(.5), tosses(K-1))
+ }
+ t = tosses(10)
+ num = t[3]
 }
 
 m = church.model(model, predicate = function() {true}, engine='mit-church')
