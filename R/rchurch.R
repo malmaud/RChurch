@@ -1,19 +1,5 @@
 # Entry points for user interaction with RChurch
 
-print.church = function(church, ...) {
-    cat('Church code: \n\n')
-    cat(church.program(church))
-}
-
-# Fill in these generic functions at some point
-summary.church = function(church, ...) {
-  
-}
-
-plot.church = function(church, ...) {
-  
-}
-
 load.church.from.file <- function(filename='~/tmp/test.church') {
   church = new.church()
   lines = readLines(filename);
@@ -93,7 +79,11 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   if(debug) cat(church$church.program)
   church$parallel = parallel
   res = draw_parallel_chain(church, n.chains, env_str, vars)
-  church$samples = res
+  church$samples = list()
+  for(chain in 1:length(res)) {
+    church$samples[[chain]] = res[[chain]][[1]]
+  }
+  church$var.types = res[[1]][[2]]
   church
 }
 
@@ -118,6 +108,7 @@ draw_single_chain <- function(church, env_str, vars) {
   else if (church$engine=="mit-church") {
     raw_output = system2('ikarus', tmp_file, env=env_str, stdout=T)
   }
+  cat(raw_output)
   options(warn=old_warn)
   parse.church.output(raw_output, vars)
 }

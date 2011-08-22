@@ -1,14 +1,10 @@
 model = function() {
- tosses = function(K) {
-   if(K==0) list() else pair(flip(.5), tosses(K-1))
- }
- t = tosses(10)
-
+  x = rnorm(1,0,1)
+  y = rnorm(1,5,1)
 }
 
-m = church.model(model, predicate = function() {true}, engine='mit-church')
-m_sampled = church.samples(m, n.iter=10, thin=1, variable.names=c('t'), n.chains=1, debug=T, parallel=F)
-samples = m_sampled$samples[[1]]$t;
+m = church.model(model, engine='mit-church')
+m.sampled = church.samples(m, n.iter=10, thin=1, variable.names=c('x','y'), n.chains=1, debug=T, parallel=F)
 
 #autocorr.plot(samples)
 #crosscorr.plot(samples)
