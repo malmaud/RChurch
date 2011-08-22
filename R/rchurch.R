@@ -1,7 +1,4 @@
-print.church = function(church, ...) {
-    cat('Church code: \n\n')
-    cat(church.program(church))
-}
+# Entry points for user interaction with RChurch
 
 load.church.from.file <- function(filename='~/tmp/test.church') {
   church = new.church()
@@ -28,7 +25,7 @@ new.church = function() {
   church
 }
 
-church.model <- function(model=function() {}, predicate=function() {},context=function() {}, engine='bher') {
+church.model <- function(model=function() {}, predicate=function() {true},context=function() {}, engine='bher') {
   query = predicate
   church = new.church()
   model_code = R.to.church(model)
@@ -49,16 +46,16 @@ church.program <- function(church) {
 
   
 church.samples <- function (church, variable.names=church$vars,  n.iter=100, 
-                            thin=100, n.chains=1, method='mcmc', inputs=list(), debug=F) {
+                            thin=100, n.chains=1, method='mcmc', inputs=list(), 
+                            parallel=T, debug=F) {
   vars = variable.names
   n.samples= n.iter
-  vars.for.church = gsub('\\.', '-', vars)
+  vars.for.church = convert.strings(vars)
   list_line = sprintf('(list %s)', paste(vars.for.church,collapse=' '))
   church$obs.vars= list_line
   if(church$engine=="bher")
     church_path = paste('.', system.file('scheme-tools', package='RChurch'), system.file('bher', package='RChurch'), sep=':')
   else if (church$engine=="mit-church")
-    #church_path = paste('.', system.file('scheme-tools', package='RChurch'), system.file('mit-church', package='RChurch'), sep=':')
     church_path = system.file('mit-church', package='RChurch')
   engine_path = system.file(church$engine, package='RChurch')
   church$inputs = R.to.church.inits(inputs)
@@ -80,76 +77,24 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   env_str = paste(env_str, collapse="\n")
   
   if(debug) cat(church$church.program)
-  
-  res.mcmc = draw_parallel_chain(church, n.chains, env_str, vars)
-  church$samples = res.mcmc
-  church$level.names = attr(res.mcmc[[1]], 'level_names')
-  for(i in length(church$samples)) {
-    attr(church$samples[[i]], 'level_names')= NULL
+  church$parallel = parallel
+  res = draw_parallel_chain(church, n.chains, env_str, vars)
+  church$samples = list()
+  for(chain in 1:length(res)) {
+    church$samples[[chain]] = res[[chain]][[1]]
   }
+  church$var.types = res[[1]][[2]]
   church
-}
-
-find.lists <- function(output) { #Will be used for parsing list outputs, not currently used
-  output = strsplit(output, '')[[1]]
-  pos = 2
-  pars = 0
-  repeat {
-    char = output[pos]
-    if(char=="(") {
-      pars = pars+1
-    }
-    if(char==")") {
-      pars = pars-1
-      if(pars==0) {
-        break
-      }
-    }
-    pos = pos + 1
-  }
-  block = output[3:(pos-1)]
-}
-
-parse.church.output <- function(raw_output, vars) {
-  data_start = which(regexpr('^\\(', raw_output)==1)[[1]]
-  data_str = raw_output[data_start:length(raw_output)]
-  data_str = paste(data_str, collapse='')
-  data_str = gsub('\\(', '', data_str)
-  data_str = gsub('\\)', '', data_str)
-  data_str = gsub('#f', '0', data_str)
-  data_str = gsub('#t', '1', data_str)
-  data = strsplit(data_str,' ')[[1]]
-  n_data = length(data)
-  res = list()
-  level_names = list() 
-  factor_outputs = c()
-  for(i in 1:length(vars)) {
-    r = data[seq(i, n_data, length(vars))]
-    if(!is.na(as.numeric(r[1]))) { #r is numeric
-      r = as.numeric(r);
-    }
-    else {
-      r = factor(r)   
-      factor_outputs = c(factor_outputs, i)
-      level_names[[length(factor_outputs)]] = levels(r)
-    }
-    res[[i]] = r
-  }
-  names(level_names) = vars[factor_outputs]
-  names(res) = vars
-  res.mcmc = mcmc(do.call(cbind, res))  
-  attr(res.mcmc, 'level_names') = level_names
-  res.mcmc
 }
 
 draw_parallel_chain <- function(church, n.chains, env_str, vars) {
   if(require(doMC)) {
-    registerDoMC(n.chains)
+    if(church$parallel) registerDoMC(n.chains) else registerDoSEQ()
   }
   res = foreach(i=icount(n.chains)) %dopar% {
     draw_single_chain(church, env_str, vars)
   }
-  do.call(mcmc.list, res)
+  #do.call(mcmc.list, res)
 }
 
 draw_single_chain <- function(church, env_str, vars) {
@@ -163,6 +108,7 @@ draw_single_chain <- function(church, env_str, vars) {
   else if (church$engine=="mit-church") {
     raw_output = system2('ikarus', tmp_file, env=env_str, stdout=T)
   }
+  cat(raw_output)
   options(warn=old_warn)
   parse.church.output(raw_output, vars)
 }

@@ -1,3 +1,5 @@
+# Code that translates R into Scheme
+
 R.to.church <- function(R_exprs) {
   if(length(R_exprs)==0) {
     return(list(code='',vars=c()))
