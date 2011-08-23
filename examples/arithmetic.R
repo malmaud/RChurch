@@ -18,4 +18,4 @@ model = function() {
 }
 
 m = church.model(model, function() (my.proc(1)==3), context, engine='mit-church')
-m = church.samples(m, variable.names=c('my.expr'), n.iter=100, thin=100, debug=T)
+m = church.samples(m, variable.names=c('my.expr'), n.iter=100, thin=100, debug=F, do.parse=F)

@@ -47,12 +47,13 @@ church.program <- function(church) {
   
 church.samples <- function (church, variable.names=church$vars,  n.iter=100, 
                             thin=100, n.chains=1, method='mcmc', inputs=list(), 
-                            parallel=T, debug=F) {
+                            parallel=T, debug=F, do.parse=T) {
   vars = variable.names
   n.samples= n.iter
   vars.for.church = convert.strings(vars)
   list_line = sprintf('(list %s)', paste(vars.for.church,collapse=' '))
   church$obs.vars= list_line
+  church$do.parse = do.parse
   if(church$engine=="bher")
     church_path = paste('.', system.file('scheme-tools', package='RChurch'), system.file('bher', package='RChurch'), sep=':')
   else if (church$engine=="mit-church")
@@ -80,8 +81,10 @@ church.samples <- function (church, variable.names=church$vars,  n.iter=100,
   church$parallel = parallel
   res = draw_parallel_chain(church, n.chains, env_str, vars)
   church$samples = list()
+  church$raw.output = list()
   for(chain in 1:length(res)) {
     church$samples[[chain]] = res[[chain]][[1]]
+    church$raw.output[[chain]] = res[[chain]][[3]]
   }
   church$var.types = res[[1]][[2]]
   church
@@ -108,7 +111,11 @@ draw_single_chain <- function(church, env_str, vars) {
   else if (church$engine=="mit-church") {
     raw_output = system2('ikarus', tmp_file, env=env_str, stdout=T)
   }
-  cat(raw_output)
   options(warn=old_warn)
-  parse.church.output(raw_output, vars)
+  if(church$do.parse)
+    l = parse.church.output(raw_output, vars)
+  else
+    l = list()
+  l[[3]] = raw_output
+  l
 }

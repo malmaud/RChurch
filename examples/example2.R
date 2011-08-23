@@ -4,7 +4,7 @@ model = function() {
 }
 
 m = church.model(model, engine='mit-church')
-m.sampled = church.samples(m, n.iter=10, thin=1, variable.names=c('x','y'), n.chains=1, debug=T, parallel=F)
-
+m.sampled = church.samples(m, n.iter=100, thin=1, variable.names=c('x','y'), n.chains=4, debug=T, parallel=T, do.parse=T)
+s = as.mcmc.list(m.sampled)
 #autocorr.plot(samples)
 #crosscorr.plot(samples)
