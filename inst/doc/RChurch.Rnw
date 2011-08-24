@@ -1,0 +1,268 @@
+\documentclass[12pt]{article}
+% Preamble
+% \VignetteIndexEntry{RChurch overview}
+\SweaveSyntax{SweaveSyntaxLatex}
+\SweaveOpts{keep.source=TRUE, figs.only=TRUE, prefix.string=graphics/plot}
+\usepackage{fullpage, graphicx, amsmath, xspace, listings}
+\usepackage[usenames, dvipsnames]{color}
+\newcommand{\rchurch}{\texttt{RChurch}\xspace}
+\newcommand{\church}{Church\xspace}
+\newcommand{\R}{R\xspace}
+\author{Jonathan Malmaud}
+\title{RChurch}
+\lstset{ 
+showstringspaces=false,
+breaklines=true,    
+keywordstyle=\color{blue}, 
+stringstyle=\color{red},
+backgroundcolor=\color{Apricot}
+}
+
+% Document start
+\begin{document}
+\setkeys{Gin}{width=.9\textwidth}
+\maketitle
+
+\section{Introduction}
+\rchurch provide an \R interface to \church. \church is a set of Scheme libraries for automatically performing conditional inference on arbitrary models, using rejection sampling or Markov Chain Monte Carlo (MCMC) sampling algorithms. The ability to condition on arbitrary predicates rather than explicitly conditioning on certain nodes in a graphical model taking on particular values, plus the ability to write the data-generating function in a full-featured programming language, gives \church much more flexibility than WinBUGS/JAGS. However, using \church directly requires a knowledge of Scheme and the installation of the Church library and a Scheme interpreter, which may frustrate potential users. Additionally, the output of a \church program can be difficult to analyze and visualize since Scheme's standard library does not include many functions for this purpose and the set of Scheme graphing libraries is very limited. 
+
+\rchurch sets out to solve both these problems. Installing the \rchurch package requires only a single command on the command line. It automatically installs and configures a scheme interpreter and the \church libraries. It also allows the predicate and data-generating function to be specified in \R instead of Scheme, and returns the results of a \church program in a parsed form that is easy to then analyze in \R. You are free to use the rich set of \R statisical and visualization routines to process the results. 
+
+The interface to \rchurch is modeled after RJags, an interface between R and the JAGS sampler. You need only familiarize yourself with two functions: church.model sets up a \church model, and church.sample draws samples from that model. Various options can be set through these functions, such as whether to use Bher or MIT-Church. Consult the help files of these functions for a comprehensive treatment. 
+
+\subsection{Installation}
+In the terminal, execute the command \texttt{R CMD INSTALL RChurch.tar.gz} from the directory where the package was downloaded to. You might need root permissions. Example:
+\begin{verbatim}
+cd('~/Downloads')
+sudo R CMD INSTALL RChurch.tar.gz
+\end{verbatim}
+
+\rchurch is not yet on CRAN. In the interrum, you can clone the git repository. From the command line, run
+\begin{verbatim}
+git clone git@github.com:/malmaud/RChurch.git -b develop
+R CMD INSTALL RChurch
+\end{verbatim}
+
+You might optionally also want to install the coda package, which is a set of diagnostic functions for analyziing MCMC chains; and the doMC and parfor packages, which allows multicore machines to run multiple chains in parallel. \rchurch will automatically utilize these libraries if they are installed. You can install them from within R:
+\lstset{language=R}
+\begin{lstlisting}
+install.packages('coda')
+install.packages('doMC')
+install.packages('parfor')
+\end{lstlisting}
+
+\section{Running Church models from R}
+\subsection{Example}
+As a simple example, say we have the \church program in Figure \ref{fig:church1} saved in a file called ``simple.church'' in \R's working directory. We draw samples from the model and plot some diagnostics:
+\begin{figure}
+\lstset{language=lisp}
+\lstinputlisting{simple.church}
+\caption{A simple Church model}
+\label{fig:church1}
+
+\end{figure}
+
+\begin{Scode}
+library(RChurch)
+my.model = church.model(filename='simple.church')
+my.samples = church.samples(my.model, variable.names=c('x', 'y'))
+summary(my.samples)
+\end{Scode}
+
+The distributions and traces of the monitored variables can be plotted:
+\begin{center}
+\begin{Scode}{fig=TRUE}
+plot(my.samples)
+\end{Scode}
+\end{center}
+
+We can look at the auto-correlation and cross-correlation of the traces to get a sense of how quickly the chain mixes:
+\begin{Scode}
+diagnostics = church.diag(my.samples)
+\end{Scode}
+
+\begin{center}
+\begin{Scode}{fig=true}
+autocorr.plot(diagnostics)
+\end{Scode}
+
+\begin{Scode}{fig=true}
+crosscorr.plot(diagnostics)
+\end{Scode}
+\end{center}
+
+\verb|church.diag| returns an object of class MCMC, which the coda package knows how to analyze.
+
+\subsection{Multiple chains}
+\rchurch can also run multiple MCMC chains at different starting points and aggregate the results. It can also compare the chains to each to assess convergence. On a multi-core computer, the chains can also be run in parallel. Here is an example, again using the model in Figure \ref{fig:church1}.
+
+\begin{Scode}
+parallel.samples = church.samples(my.model, variable.names=c('x','y'), 
+  n.chains=4, parallel=TRUE)
+summary(parallel.samples)
+\end{Scode}
+
+The trace shows all the chains overlayed on each other:
+
+\begin{Scode}{fig=true}
+plot(parallel.samples)
+\end{Scode}
+
+A Gelman diagnostic can assess convergence by comparing the variance within a chain to the variance between chains. An upper limit far away from 1 indicates a lack of convergence.
+\begin{Scode}
+parallel.diagnostics = church.diag(parallel.samples)
+gelman.diag(parallel.diagnostics)
+\end{Scode}
+
+We can also make a Gelman plot, showing how the Gelman diagnostic varies with iteration number:
+\begin{center}
+\begin{Scode}{fig=true}
+gelman.plot(parallel.diagnostics)
+\end{Scode}
+\end{center}
+
+See the \texttt{coda} documentation for a full list of diagnostics.
+
+
+\subsection{Limitations}
+\begin{itemize}
+\item The final output of the \church program must be a list of observed variables. The observed variables must either be a symbol/character string, numeric value, or a list of observed variables\footnote{The lists can be arbitrarily nested, however}. They can't, e.g., be an entire lambda expression. All \rchurch cares about is that the result of executing the Scheme code through the Scheme interpreter is a list--it doesn't care whether it was actually generated by a \church query.
+\item A consequence is the output cannot be a single scalar, but must be a list with one element. So this won't work:
+\begin{lstlisting}
+(mh-query 100 10
+  (define x (gaussian 0 1))
+  x
+  (> x 0)
+)
+\end{lstlisting}
+But this will:
+\begin{lstlisting}
+(mh-query 100 10
+  (define x (gaussian 0 1))
+  (list x)
+  (> x 0)
+)
+\end{lstlisting}
+\item For character observed variables, the value of the variable cannot conflict with an R symbol.
+\item Logical returned variables (those whole value is \#f or \#t) are converted to 0 and 1 numeric values, respectively. String outputs with content \#f or \#t will also be mistakenly converted, so avoid using those.
+\end{itemize}
+
+\section{Translate R into Scheme}
+\subsection{Language translation}
+In addition to providing an interface to load and process \church code written in Scheme, \rchurch can also automatically translate (certain) R programs into Scheme behind the scenes. This allows you to both write and analyze \church models entirely in the R environment without knowing any Scheme. 
+
+\subsection{Example}
+We will convert the model in Figure \ref{fig:church1}. The equivalent code using just R is
+
+\begin{Scode}
+simple.model <- function() {
+  x <- rnorm(1, 0, 1)
+  y <- rnorm(1, 0, 2)
+  z <- x+y
+}
+
+R.model = church.model(model=simple.model, predicate=function() {z>0})
+R.samples = church.samples(R.model, n.iter=100, 
+  thin=10, variable.names=c('x', 'y'))
+summary(R.samples)
+\end{Scode}
+
+You don't explicitly reference mh-query or return a list of observed variables in the model. \rchurch automatically generates the appropropriate query and list call. 
+
+
+For a more complicated example, we consider the ``Tug of War'' example from the Church wiki, reproduced in Figure \ref{fig:tugofwar}. The R equivalent is
+
+\begin{Scode}
+model = function() {
+  strength = mem(function(person) if(flip()) 10 else 5)
+  lazy = function(person) flip(1/3)
+  total.pulling = function(team) {
+    realized.strength = function(person) 
+      if(lazy(person)) strength(person)/2 else strength(person)
+    sum(sapply(team, realized.strength))
+  }
+  winner = function(team1, team2) 
+    if(total.pulling(team1) < total.pulling(team2)) 'team2' else 'team1'
+  team1.wins = 'team1' == winner(c('bob', 'mary'), c('jim', 'sue'))
+}
+
+predicate = function() {strength('mary')>=strength('sue') && 'team1' == winner(c('bob', 'francis'), c('tom', 'jim'))}
+
+tug.of.war.model = church.model(model, predicate)
+tug.of.war.samples = church.samples(tug.of.war.model, variable.names=c('team1.wins'), n.iter=100, thin=10)
+\end{Scode}
+
+\begin{center}
+\begin{Scode}{fig=true}
+plot(tug.of.war.samples)
+\end{Scode}
+\end{center}
+
+Here the model makes reference to several symbols defined in \church but not \R, such as flip and mem. Since the R-to-Scheme translator doesn't recognize these symbols, they are parsed through to \church unchanged. There are also some symbols defined in \R but not \church, such as sapply. The translator recognizes a stock set of such \R symbols and translates them into equivalent Scheme code. See Table \ref{table:RtoScheme} for a list of recognized R symbols.
+
+\begin{figure}
+\lstset{language=lisp}
+\lstinputlisting{tugofwar.church}
+\caption{Tug of War model, in Scheme}
+\label{fig:tugofwar}
+\end{figure}
+
+\begin{table}
+\begin{tabular}{ccc}
+\R command & Church equivalent & Example\\
+\hline
+\verb|<-| or \verb|==| & define or let & \verb|x<-5|\\
+c & list & \verb|x<-c(1, 3, 5)|\\
+\verb|:| & iota & \verb|x<-1:5|\\
+sapply & map & sapply(c(1,2,3), function(x) x+1)\\
+\verb|[| & vector-ref & \verb|x<-c('jon', 'bob'); y<-x[2];|\\
+replicate & repeat & \verb|replicate(5, function() rnorm(1,0,1))|\\
+function & lambda & \verb|f<-function(x) 1+x|\\
+\verb|{| & |let*| & \verb|f<-function(x) {y=2*x; y+1}|\\
+sample & \verb|uniform-draw| & \verb|x<-c(1,6,12); y<-sample(x, 2)|\\
+rnorm & \verb|gaussian| & \verb|x<-rnorm(1,0,1)|\\
+if & if & \verb|x<-if(y>0) 1 else -1|\\
+\verb|&&|, \verb=||= & and, or & \verb=predicate<-function() {a>b && (b<c || c<d)}=
+\end{tabular}
+\caption{A list of R symbols that the translator knows how to translate into Church equivalents.}
+\label{table:RtoScheme}
+\end{table}
+
+\subsection{Limitations}
+\begin{itemize}
+\item The model cannot call any R function or reference an R object that is not defined in the model or context. 
+\item Arithmetic expressions in the model will not automatically vectorize. You have to explicitly use sapply or map. So this won't work:
+\lstset{language=R}
+\begin{lstlisting}
+function() {
+  x = c(1,2,3)
+  y = 5*x
+}
+\end{lstlisting}
+
+But this will:
+\begin{lstlisting}
+function() {
+  x = c(1,2,3)
+  y = sapply(x, function(p) p*5)
+}
+
+\end{lstlisting}
+\item From within a lower scope, you cannot assign to a variable in a higher scope. So this won't work:
+\begin{lstlisting}
+function() {
+  x = 0
+  y = rnorm(1,0,1)
+  if(y>0) x <- 1 else x <- -1
+}
+\end{lstlisting}
+But this will:
+\begin{lstlisting}
+function() {
+  y = rnorm(1, 0, 1)
+  x = if(y>0) 1 else -1
+}
+\end{lstlisting}
+\end{itemize}
+
+\end{document}

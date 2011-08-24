@@ -20,15 +20,28 @@ new.church = function() {
   church
 }
 
+update.church <- function(church, ...) {
+  if(church$from.file) {
+    church.from.file(church, church$file.name)
+  }
+}
+
+church.from.file <- function(church, filename) {
+    church$from.file = T
+    church$file.name = filename
+    if(!file.exists(filename)) stop(paste('File', filename,'not found'))
+    church$file.content = paste(readLines(filename, warn=F), collapse="\n")
+    church
+}
+
 church.model <- function(model=function() {}, predicate=function() {true},context=function() {}, engine='bher', filename=NA) {
-  if(engine!='bher' && engine!='mit-church') stop('Engine not supported')
+  #if(engine!='bher' && engine!='mit-church') stop('Engine not supported')
+  if(!is.element(engine, c('bher', 'mit-church'))) stop('Engine not supported')
   church = new.church()
   church$engine = engine
   if(!is.na(filename)) {
-    church$from.file = T
-    if(!file.exists(filename)) stop(paste('File'),filename,'not found', sep=' ')
-    church$file.content = paste(readLines(filename, warn=F), collapse="\n")
-    
+
+    church = church.from.file(church, filename)
   }
   else {
     query = predicate
@@ -86,7 +99,7 @@ church.samples <- function(church, variable.names=church$vars,  n.iter=100,
   
   if(debug) cat(church$church.program)
   church$parallel = parallel
-  res = draw_parallel_chain(church, n.chains, env_str, vars)
+  res = draw_parallel_chain(church, n.chains, env_str, vars, debug)
   church$samples = list()
   church$raw.output = list()
   for(chain in 1:length(res)) {
@@ -97,17 +110,25 @@ church.samples <- function(church, variable.names=church$vars,  n.iter=100,
   church
 }
 
-draw_parallel_chain <- function(church, n.chains, env_str, vars) {
+draw_parallel_chain <- function(church, n.chains, env_str, vars, debug=F) {
   if(require(doMC)) {
     if(church$parallel) registerDoMC(n.chains) else registerDoSEQ()
   }
-  res = foreach(i=icount(n.chains)) %dopar% {
-    draw_single_chain(church, env_str, vars)
+  if(church$parallel) {
+    res = foreach(i=icount(n.chains)) %dopar% {
+      draw_single_chain(church, env_str, vars, debug)
+    }
+  }
+  else { #This form is easier for debugging
+    res = list()
+    for(i in 1:n.chains) {
+      res[[i]] = draw_single_chain(church, env_str, vars, debug)
+    }
   }
   #do.call(mcmc.list, res)
 }
 
-draw_single_chain <- function(church, env_str, vars) {
+draw_single_chain <- function(church, env_str, vars, debug=F) {
   tmp_file = tempfile('tmp_church', fileext='church')
   writeLines(church$church.program, tmp_file)
   old_warn = getOption('warn')
@@ -118,6 +139,7 @@ draw_single_chain <- function(church, env_str, vars) {
   else if (church$engine=="mit-church") {
     raw_output = system2('ikarus', tmp_file, env=env_str, stdout=T)
   }
+  if(debug) cat(raw_output)
   options(warn=old_warn)
   if(church$do.parse)
     l = parse.church.output(raw_output, vars)

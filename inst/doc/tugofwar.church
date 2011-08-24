@@ -1,0 +1,15 @@
+  (mh-query 100 1
+    (define strength (mem (lambda (person) (if (flip) 10 5))))
+    (define lazy (lambda (person) (flip (/ 1 3))))
+
+    (define (total-pulling team)
+      (sum 
+         (map (lambda (person) (if (lazy person) (/ (strength person) 2) (strength person)))
+               team)))
+ 
+    (define (winner team1 team2) (if (< (total-pulling team1) (total-pulling team2)) 'team2 'team1))
+
+    (list (eq? 'team1 (winner '(bob mary) '(jim sue))))
+ 
+    (and (>= (strength 'mary) (strength 'sue))
+         (eq? 'team1 (winner '(bob francis) '(tom jim)))))

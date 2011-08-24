@@ -1,0 +1,7 @@
+(mh-query 100 10
+	(define x (gaussian 0 1))
+	(define y (gaussian 0 2))
+	(define z (+ x y))
+	(list x y)
+	(> z 0)
+)

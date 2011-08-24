@@ -3,11 +3,12 @@ parse.church.output <- function(raw_output, vars) {
   data_start = which(regexpr('^\\(', raw_output)==1)[[1]]
   data_str = raw_output[data_start:length(raw_output)]
   data_str = paste(data_str, collapse='')
-  data_str = gsub('#f', '0', data_str)
+  data_str = gsub('#f', '0', data_str) #Fix this to add real support for logical output
   data_str = gsub('#t', '1', data_str)
   parse.res = find.lists(data_str)
   var.types = parse.res[[2]]
   parse.res = parse.res[[1]]
+  if(length(vars)!=length(var.types)) vars <- paste('v', 1:length(var.types), sep='')
   res = list()
   for(i in 1:length(vars)) {
     res[[i]] = list()

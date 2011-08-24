@@ -9,6 +9,7 @@ church.diag <- function(church) {
 as.mcmc.list.church = function(x, ...) { # Returns an MCMC list for convergence assessment. Currently strips out returned lists (keeps only scalars)
   church = x
   var.types = church$var.types
+  var.names = ls(church$samples[[1]])
   n.chains = length(church$samples)
   n.samples = length(church$samples[[1]][[1]])
   into.list = which(sapply(var.types, function(a) !is.list(a)))
@@ -16,6 +17,7 @@ as.mcmc.list.church = function(x, ...) { # Returns an MCMC list for convergence 
  
   for(chain in 1:n.chains) {
     mclist[[chain]] = matrix(nrow=n.samples, ncol=length(into.list))
+    colnames(mclist[[chain]]) = var.names
     for(var in 1:length(into.list)) {
       sample = church$samples[[chain]][[into.list[[var]]]]
       if(var.types[[into.list[var]]]=="character") {
@@ -35,9 +37,9 @@ print.church = function(church, ...) {
 
 # Fill in these generic functions at some point
 summary.church = function(church, ...) {
-  
+  summary(church.diag(church))
 }
 
 plot.church = function(church, ...) {
-  
+  plot(church.diag(church))
 }

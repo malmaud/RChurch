@@ -9,8 +9,8 @@ model = function() {
   team1.wins = 'team1' == winner(c('bob', 'mary'), c('jim', 'sue'))
 }
 
-predicate = function() strength('mary')>=strength('sue') && 'team1' == winner(c('bob', 'francis'), c('tom', 'jim'))
+predicate = function() {strength('mary')>=strength('sue') && 'team1' == winner(c('bob', 'francis'), c('tom', 'jim'))}
 
 tug.of.war.model = church.model(model, predicate)
-samples = church.samples(tug.of.war.model, variable.names=c('team1.wins'), n.iter=100, thin=10, method='mcmc')
+samples = church.samples(tug.of.war.model, variable.names=c('team1.wins'), n.iter=100, thin=10)
 hist(samples, main="Do bob and mary win against jim and sue")

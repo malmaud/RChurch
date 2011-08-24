@@ -7,7 +7,7 @@ R interface to Church
 }
 \description{
 Provides an interface to the Church set of Scheme commands. Allows models to be specified as R scripts and 
-translates the scripts to Church behind the cenes.
+translates the scripts to Church behind the scenes.
 }
 \details{
 \tabular{ll}{
@@ -18,20 +18,8 @@ Date: \tab 2011-08-11\cr
 License: \tab GPL 3\cr
 LazyLoad: \tab yes\cr
 }
-See \code{\link{church.model}} and \code{\link{church.sample}}
+See \code{\link{church.model}} and \code{\link{church.sample}}. Run \code{vignette{'RChurch'}} for an overview and some examples.
 }
 \author{
 Jon Malmaud <malmaud@mit.edu>
-}
-\references{
-~~ Literature or other references for background information ~~
-}
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
-\keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
-\examples{
-%% ~~ simple examples of the most important functions ~~
 }

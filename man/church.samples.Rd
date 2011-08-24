@@ -18,7 +18,7 @@ The Church program, created by \code{\link{church.model}}
 }
   \item{variable.names}{
 %%     ~~Describe \code{variable.names} here~~
-A list of variable names defined in the model whose sampled values will be returned
+The names of the variables being observed in the Church program.
 }
   \item{n.iter}{
 %%     ~~Describe \code{n.iter} here~~
@@ -26,15 +26,28 @@ The number of iterations to run the sampler for.
 }
   \item{thin}{
 %%     ~~Describe \code{thin} here~~
-The thinning interval. An integer giving the frequency of samples to keep.
+The thinning interval. An integer giving the frequency of samples to keep. Defaults to 1 (meaning no samples are dropped).
 }
+  \item{n.chains}{
+  The number of chains to run.  Defaults to 1.
+  }
+  
   \item{method}{
 %%     ~~Describe \code{method} here~~
-The sampler method. Either "mcmc" for the Metropolis Hastings sampler or "rejection" for rejection sampling.
+The sampler method. Either "mcmc" for the Metropolis Hastings sampler or "rejection" for rejection sampling. Defaults to "mcmc".
 }
   \item{inputs}{
 %%     ~~Describe \code{inputs} here~~
 A list of inptus to the Church model.
+}
+\item{parallel} {
+Logical variable for whether to run the chains in parallel or run them serially. Running them in parallel requires the \code{doMC} and \code{parfor} package be intalled.
+}
+\item{debug} {
+Logical variable for whether to print various debugging information.
+}
+\item {do.parse}{
+Logical variable for whether to parse the results from the Scheme interpreter into R structures or just record the returned string.
 }
 }
 \details{
@@ -46,29 +59,29 @@ A list of inptus to the Church model.
 %%  \item{comp1 }{Description of 'comp1'}
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
-Returns a list of samples of monitored variables. The list is of type 'mcmc', which allows the Coda package to run MCMC diagnostics.
+Returns a new Church object containing the drawn samples.
+\item{samples}{A list of the returned samples. Each component corresponds to one chain. }
 }
-\references{
-%% ~put references to the literature/web site here ~
-}
+
 \author{
 %%  ~~who you are~~
+Jon Malmaud
 }
 \note{
 %%  ~~further notes~~
-Note that the total number of iterations the sampler will be run for is n.iter * thin.
+Note that the total number of iterations the sampler will be run for is n.iter * thin, as n.iter is the number of returned iterations.
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{church.model}}
 }
 \examples{
-#Assume my.program already exists
-samples = church.samples(my.program, variable.names=c('x','y'), n.iter=100, thin=10, method='mcmc', inputs=list(name='jon', age=24))
+#Assume my.model already exists
+samples = church.samples(my.model, variable.names=c('x','y'), n.iter=100, thin=10, method='mcmc', inputs=list(name='jon', age=24))
 plot(samples)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-

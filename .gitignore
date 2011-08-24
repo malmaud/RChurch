@@ -2,3 +2,16 @@
 .RData
 .Rhistory
 .DS_Store
+/inst/doc/auto/
+/inst/doc/graphics/
+/inst/doc/writeup.aux
+/inst/doc/writeup.log
+/inst/doc/writeup.R
+/inst/doc/writeup.tex
+/examples/Rplot.pdf
+/inst/doc/RChurch.aux
+/inst/doc/RChurch.log
+/inst/doc/RChurch.pdf
+/inst/doc/Rplots.pdf
+/inst/doc/writeup-002.pdf
+/inst/doc/writeup.pdf
