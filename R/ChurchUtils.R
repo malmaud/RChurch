@@ -1,3 +1,9 @@
+church.diag <- function(church) {
+  if(!require('coda')) stop('Requires the coda package')
+  as.mcmc.list(church)
+}
+
+
 #Generic functions implemented by the church object
 
 as.mcmc.list.church = function(x, ...) { # Returns an MCMC list for convergence assessment. Currently strips out returned lists (keeps only scalars)

@@ -1,16 +1,11 @@
 # Entry points for user interaction with RChurch
 
-load.church.from.file <- function(filename='~/tmp/test.church') {
-  church = new.church()
-  lines = readLines(filename);
-  church$original = lines
-  wrap.church(church)
-}
+
 
 wrap.church <- function(church) {
   if(church$engine=="mit-church") {
-    church$prefix = c('(import (church church))', '(church')
-    church$suffix = c(')', '(exit 0)')
+    church$prefix = paste('(import (church church))', '(church')
+    church$suffix = paste(')', '(exit 0)')
   }
   else {
     church$prefix= ''
@@ -25,27 +20,39 @@ new.church = function() {
   church
 }
 
-church.model <- function(model=function() {}, predicate=function() {true},context=function() {}, engine='bher') {
-  query = predicate
+church.model <- function(model=function() {}, predicate=function() {true},context=function() {}, engine='bher', filename=NA) {
+  if(engine!='bher' && engine!='mit-church') stop('Engine not supported')
   church = new.church()
-  model_code = R.to.church(model)
   church$engine = engine
-  church$vars = unique(model_code$vars)
-  church$query = R.to.church(query)$code
-  church$context = R.to.church(context)$code
-  church$model = model_code$code
+  if(!is.na(filename)) {
+    church$from.file = T
+    if(!file.exists(filename)) stop(paste('File'),filename,'not found', sep=' ')
+    church$file.content = paste(readLines(filename, warn=F), collapse="\n")
+    
+  }
+  else {
+    query = predicate
+    model_code = R.to.church(model)
+    church$vars = unique(model_code$vars)
+    church$query = R.to.church(query)$code
+    church$context = R.to.church(context)$code
+    church$model = model_code$code
+    church$from.file = F
+  }
   #var_str = paste(church$vars, collapse=' ')
   #church$original = paste(R.to.church(context)$code, model_code$code, '\n(list ', var_str, ')\n', R.to.church(query)$code, '\n')
   wrap.church(church)
 }
 
 church.program <- function(church) {
-  paste(c(church$prefix, church$context, church$query.line.prefix, church$inputs, church$model,
-          church$obs.vars, church$query, church$query.line.suffix, church$suffix), collapse="\n")
+  base= if(church$from.file) church$file.content else
+    paste(c(church$context, church$query.line.prefix, church$inputs, church$model,
+          church$obs.vars, church$query, church$query.line.suffix), collapse="\n")
+  paste(church$prefix, base, church$suffix, collapse="\n")
 }
 
   
-church.samples <- function (church, variable.names=church$vars,  n.iter=100, 
+church.samples <- function(church, variable.names=church$vars,  n.iter=100, 
                             thin=100, n.chains=1, method='mcmc', inputs=list(), 
                             parallel=T, debug=F, do.parse=T) {
   vars = variable.names
