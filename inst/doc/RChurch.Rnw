@@ -186,10 +186,13 @@ model = function() {
   team1.wins = 'team1' == winner(c('bob', 'mary'), c('jim', 'sue'))
 }
 
-predicate = function() {strength('mary')>=strength('sue') && 'team1' == winner(c('bob', 'francis'), c('tom', 'jim'))}
+predicate = function() {
+  strength('mary')>=strength('sue') &&
+   'team1' == winner(c('bob', 'francis'), c('tom', 'jim'))}
 
 tug.of.war.model = church.model(model, predicate)
-tug.of.war.samples = church.samples(tug.of.war.model, variable.names=c('team1.wins'), n.iter=100, thin=10)
+tug.of.war.samples = church.samples(tug.of.war.model, 
+  variable.names=c('team1.wins'), n.iter=100, thin=10)
 \end{Scode}
 
 \begin{center}
@@ -263,6 +266,8 @@ function() {
   x = if(y>0) 1 else -1
 }
 \end{lstlisting}
+
+\item The variables you want to monitor must be explicitly assigned to a variable within the model. You cannot monitor an expression. Note how in the ``Tug of War'' example, \verb|team1.wins| is used to store the result of the logical expression we want to monitor.
 \end{itemize}
 
 \end{document}
