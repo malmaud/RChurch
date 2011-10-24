@@ -2,7 +2,8 @@
 
 
 
-wrap.church <- function(church) {
+wrap.church <- function(church) { 
+  # Wraps a church program in a header that imports church and exists after the query
   if(church$engine=="mit-church") {
     church$prefix = paste('(import (church church))', '(church')
     church$suffix = paste(')', '(exit 0)')
